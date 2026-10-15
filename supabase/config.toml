@@ -1,0 +1,4 @@
+project_id = "mediscribe-ai"
+
+[functions.generate-notes]
+verify_jwt = true

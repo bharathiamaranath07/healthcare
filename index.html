@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediScribe AI | Clinical Notes</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon">✚</span><span>MediScribe <b>AI</b><small>Clinical documentation assistant</small></span></a>
+    <div class="top-actions">
+      <span id="connectionStatus" class="status-pill">Demo mode</span>
+      <button id="signOutBtn" class="btn btn-ghost hidden">Sign out</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">SMARTER CLINICAL DOCUMENTATION</p>
+        <h1>Less typing.<br><span>More time for care.</span></h1>
+        <p class="hero-copy">Capture a consultation, turn it into structured notes, and review every detail before saving.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="pulse">✚</div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div></div>
+    </section>
+
+    <section id="authPanel" class="panel auth-panel">
+      <div>
+        <p class="eyebrow">OPTIONAL CLOUD SYNC</p>
+        <h2>Sign in to save notes</h2>
+        <p class="muted">Without Supabase credentials, you can still test the prototype locally.</p>
+      </div>
+      <form id="authForm" class="auth-form">
+        <input id="emailInput" type="email" placeholder="Email address" autocomplete="email" required />
+        <input id="passwordInput" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password" minlength="6" required />
+        <div class="button-row"><button class="btn btn-primary" type="submit" id="signInBtn">Sign in</button><button class="btn btn-secondary" type="button" id="signUpBtn">Create account</button></div>
+        <p id="authMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <div class="workspace">
+      <section class="panel capture-panel">
+        <div class="section-heading"><div><p class="eyebrow">01 / CAPTURE</p><h2>Consultation transcript</h2></div><span class="step-icon">🎙</span></div>
+        <div class="record-card">
+          <div class="record-indicator" id="recordIndicator"><span></span></div>
+          <div><strong id="recordTitle">Ready to listen</strong><p id="recordHelp" class="muted">Use Chrome or Edge and allow microphone access.</p></div>
+          <button id="recordBtn" class="btn btn-record" type="button"><span>●</span> Start recording</button>
+        </div>
+        <label for="transcriptInput" class="field-label">Transcript text</label>
+        <textarea id="transcriptInput" rows="10" placeholder="Start recording, or type/paste a consultation transcript here.&#10;&#10;Demo example: Patient has fever for three days and cough since yesterday. No breathlessness. Check temperature and oxygen saturation. Review in two days."></textarea>
+        <div class="inline-tools"><span id="wordCount">0 words</span><button id="loadExampleBtn" class="text-btn" type="button">Load demo transcript</button><button id="clearBtn" class="text-btn" type="button">Clear</button></div>
+        <div class="button-row action-row"><button id="generateBtn" class="btn btn-primary" type="button">Generate clinical notes <span>→</span></button></div>
+        <p class="fine-print">Microphone transcription uses your browser's Web Speech API. Browser support and language availability vary.</p>
+      </section>
+
+      <section class="panel notes-panel">
+        <div class="section-heading"><div><p class="eyebrow">02 / REVIEW</p><h2>Structured clinical note</h2></div><span class="review-badge">Doctor review required</span></div>
+        <div id="emptyState" class="empty-state"><div class="empty-icon">▤</div><h3>Your note will appear here</h3><p>Transcribe or enter a consultation, then select <b>Generate clinical notes</b>.</p></div>
+        <div id="noteEditor" class="note-editor hidden">
+          <label class="field-label" for="patientLabel">Patient label / visit reference <span class="optional">(avoid full identifiers in demo)</span></label>
+          <input id="patientLabel" type="text" placeholder="e.g. Demo visit 001" />
+          <div class="note-section"><label for="subjective">S <span>Subjective</span></label><textarea id="subjective" rows="3"></textarea></div>
+          <div class="note-section"><label for="objective">O <span>Objective</span></label><textarea id="objective" rows="3"></textarea></div>
+          <div class="note-section"><label for="assessment">A <span>Assessment</span></label><textarea id="assessment" rows="3"></textarea></div>
+          <div class="note-section"><label for="plan">P <span>Plan</span></label><textarea id="plan" rows="3"></textarea></div>
+          <div id="reviewFlags" class="review-flags hidden"></div>
+          <div class="button-row note-actions"><button id="copyBtn" class="btn btn-secondary" type="button">Copy note</button><button id="downloadBtn" class="btn btn-secondary" type="button">Download .txt</button><button id="saveBtn" class="btn btn-primary" type="button">Save note</button></div>
+          <p id="saveMessage" class="form-message" aria-live="polite"></p>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel history-panel">
+      <div class="section-heading"><div><p class="eyebrow">03 / YOUR WORK</p><h2>Saved notes</h2></div><button id="refreshBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+      <div id="historyList" class="history-list"><p class="muted">Notes are saved in this browser until you configure Supabase and sign in.</p></div>
+    </section>
+
+    <footer><span>✚ MediScribe AI</span><span>Prototype only · Not for autonomous diagnosis or prescribing</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
